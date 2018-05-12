@@ -1,0 +1,9 @@
+.mat-input-element {
+    caret-color: #0bae02 !important;
+}
+.searchField  {
+    display: flex;
+}
+.resetButton {
+    padding-top: 10px;
+}

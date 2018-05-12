@@ -1,0 +1,27 @@
+<div class="example-container mat-elevation-z8">
+  <table mat-table #table [dataSource]="dataSource">
+
+    <!--- Note that these columns can be defined in any order.
+          The actual rendered columns are set as a property on the row definition" -->
+
+    <!-- Position Column -->
+    <ng-container matColumnDef="trainNumber">
+      <th mat-header-cell *matHeaderCellDef>Juna</th>
+      <td mat-cell *matCellDef="let train"> {{train.trainType}} {{train.trainNumber}} </td>
+    </ng-container>
+    <ng-container matColumnDef="trainDepartureStation">
+      <th mat-header-cell *matHeaderCellDef>Lähtöasema</th>
+      <td mat-cell *matCellDef="let train"> {{getTrainDepartureStation(train)}} </td>
+    </ng-container>
+    <ng-container matColumnDef="trainArrivalStation">
+      <th mat-header-cell *matHeaderCellDef>Pääteasema</th>
+      <td mat-cell *matCellDef="let train"> {{getTrainArrivalStation(train)}} </td>
+    </ng-container>
+    <ng-container  matColumnDef="trainTime">
+      <th mat-header-cell *matHeaderCellDef>{{getTimeText()}}</th>
+      <td mat-cell *matCellDef="let train"> {{getSelectedStationTime(train) | date:'HH:mm'}} </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</div>
