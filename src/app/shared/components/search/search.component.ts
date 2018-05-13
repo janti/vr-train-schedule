@@ -57,5 +57,7 @@ export class SearchComponent implements OnInit {
     this.searchControl.setValue('');
     this.clear.emit();
   }
-
+  resetAll() {
+    this.clear.emit();
+  }
 }

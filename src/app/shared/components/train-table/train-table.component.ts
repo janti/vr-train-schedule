@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Train, TimeTableRow } from '../../models/train/train';
 import { Station } from '../../models/station/station';
+import { TableRow } from '../../models/table-row/table-row';
 
 @Component({
   selector: 'app-train-table',
@@ -8,8 +9,8 @@ import { Station } from '../../models/station/station';
   styleUrls: ['./train-table.component.css']
 })
 export class TrainTableComponent implements OnInit {
-  displayedColumns = ['trainNumber', 'trainDepartureStation', 'trainArrivalStation', 'trainTime'];
-  @Input() dataSource: Train[];
+  displayedColumns = ['trainName', 'departingStation', 'arrivalStation', 'selectedStationTime'];
+  @Input() dataSource: TableRow[];
   @Input() stations: Station[];
   @Input() selectedStationShortCode: string;
   @Input() type: string;
@@ -17,58 +18,24 @@ export class TrainTableComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-
+    this.dataSource = this.dataSource.sort((a, b) => {
+      if ( a.selectedStationTime > b.selectedStationTime ) {
+        return 1;
+      }
+      if ( b.selectedStationTime > a.selectedStationTime ) {
+        return -1;
+      }
+    });
   }
-
-  getTrainDepartureStation(train: Train) {
-    const departureStationShortName = train.timeTableRows[0].stationShortCode;
-    const departureStation: Station[] =
-      this.stations.filter( station => station.stationShortCode === departureStationShortName);
-
-    if (departureStation.length === 0 ) {
-      return departureStationShortName;
+  getColor(tableRow: TableRow) {
+    if ( tableRow.trainCancelled) {
+      return 'lightgrey';
     } else {
-      return departureStation[0].stationName;
+      return '';
     }
+
   }
-  getTrainArrivalStation(train: Train) {
-    const arrivalStationShortName = train.timeTableRows[train.timeTableRows.length - 1].stationShortCode;
-
-    const arrivalStation: Station[] =
-      this.stations.filter( station => station.stationShortCode === arrivalStationShortName);
-
-    if (arrivalStation.length === 0 ) {
-        return arrivalStationShortName;
-      } else {
-        return arrivalStation[0].stationName;
-      }
-    }
-  getSelectedStationTime(train: Train) {
-    if ( this.type === 'ARRIVAL') {
-      const arrival: TimeTableRow[] = train.timeTableRows.filter(
-        timeTableRow =>
-        timeTableRow.stationShortCode === this.selectedStationShortCode &&
-        timeTableRow.type === 'ARRIVAL');
-        if ( arrival.length === 1 && arrival[0].scheduledTime !== undefined ) {
-          return arrival[0].scheduledTime;
-        } else {
-          return '';
-        }
-
-      } else {
-
-        const departure: TimeTableRow[] = train.timeTableRows.filter(
-          timeTableRow => timeTableRow.stationShortCode === this.selectedStationShortCode &&
-          timeTableRow.type === 'DEPARTURE');
-        if ( departure.length === 1 && departure[0].scheduledTime !== undefined ) {
-          return departure[0].scheduledTime;
-        } else {
-          return '';
-        }
-
-      }
-    }
-    getTimeText() {
+  getTimeText() {
       if ( this.type === 'DEPARTURE') {
         return 'Lähtee';
       } else {

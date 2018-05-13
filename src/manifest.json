@@ -1,0 +1,13 @@
+{
+  "name": "Aseman junatiedot",
+  "short_name": "Junatiedot",
+  "start_url": "/",
+  "display": "standalone",
+  "description": "Aseman junatiedot",
+  "icons": [{
+    "src": "assets/images/train.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }],
+  "orientation":"landscape"
+}

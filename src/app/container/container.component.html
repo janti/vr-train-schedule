@@ -1,28 +1,30 @@
 <div class="container">
   <app-search [stations]="stations" (clear)="clear()" (search)="search($event)"></app-search>
 
-  <mat-card *ngIf="trains && trains.length > 0">
-    <mat-card-content>
-      <mat-tab-group class="train-tab-group">
-        <mat-tab label="Lähtevät">
-            <app-train-table 
-                [selectedStationShortCode]='selectedStationShortCode' 
-                [stations]='stations' 
-                [dataSource]='trains'
-                [type]="'DEPARTURE'">
-            </app-train-table>
-        </mat-tab>
-        <mat-tab label="Saapuvat">
-            <app-train-table
-                [selectedStationShortCode]='selectedStationShortCode' 
-                [stations]='stations' 
-                [dataSource]='trains'
-                [type]="'ARRIVAL'">
-            </app-train-table>
-        </mat-tab>
-      </mat-tab-group>  
-    </mat-card-content> 
-  </mat-card>
+  <div class="table-area">
+    <mat-card *ngIf="tableRowsArrival && tableRowsArrival.length > 0 && tableRowsDeparture && tableRowsDeparture.length > 0">
+      <mat-card-content>
+        <mat-tab-group class="train-tab-group">
+          <mat-tab label="Saapuvat">
+              <app-train-table
+                  [selectedStationShortCode]='selectedStationShortCode' 
+                  [stations]='stations' 
+                  [dataSource]='tableRowsArrival'
+                  [type]="'ARRIVAL'">
+              </app-train-table>
+          </mat-tab>
+          <mat-tab label="Lähtevät">
+              <app-train-table 
+                  [selectedStationShortCode]='selectedStationShortCode' 
+                  [stations]='stations' 
+                  [dataSource]='tableRowsDeparture'
+                  [type]="'DEPARTURE'">
+              </app-train-table>
+          </mat-tab>
+        </mat-tab-group>  
+      </mat-card-content> 
+    </mat-card>
+</div>
 
  
 

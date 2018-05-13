@@ -3,7 +3,10 @@
 }
 .searchField  {
     display: flex;
+    padding-top: 10px;
 }
 .resetButton {
     padding-top: 10px;
 }
+
+
