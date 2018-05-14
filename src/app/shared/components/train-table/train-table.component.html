@@ -1,26 +1,41 @@
 <div class="table-container">
   <table mat-table #table [dataSource]="dataSource">
+    
+    <!-- Train name -->
     <ng-container matColumnDef="trainName">
       <th mat-header-cell *matHeaderCellDef>Juna</th>
       <td [style.color]=getColor(tableRow) mat-cell *matCellDef="let tableRow"> {{tableRow.trainName}} </td>
     </ng-container>
+
+    <!-- Departing station-->
     <ng-container matColumnDef="departingStation">
       <th mat-header-cell *matHeaderCellDef>Lähtöasema</th>
       <td [style.color]=getColor(tableRow) mat-cell *matCellDef="let tableRow"> {{tableRow.departingStation}} </td>
     </ng-container>
+    
+    <!-- Arrival station-->
     <ng-container matColumnDef="arrivalStation">
       <th mat-header-cell *matHeaderCellDef>Pääteasema</th>
       <td [style.color]=getColor(tableRow) mat-cell *matCellDef="let tableRow"> {{tableRow.arrivalStation}} </td>
     </ng-container>
+    
+    <!-- Time in selected station-->
     <ng-container  matColumnDef="selectedStationTime">
       <th mat-header-cell *matHeaderCellDef>{{getTimeText()}}</th>
+      
+      <!-- If train is cancelled, change font color-->
       <td [style.color]=getColor(tableRow) mat-cell *matCellDef="let tableRow">
+
+        <!-- If changes in schedule, eg. actualTIme is defined-->
         <div *ngIf="tableRow.actualTime && !tableRow.trainCancelled" [style.color]="'red'">{{tableRow.actualTime | date:'HH:mm'}}</div> 
         <div *ngIf="tableRow.actualTime && !tableRow.trainCancelled"  [style.font-size]="'10px'">({{tableRow.selectedStationTime | date:'HH:mm'}})</div> 
         
+        <!-- Normal situation-->
         <div *ngIf="!tableRow.actualTime">{{tableRow.selectedStationTime | date:'HH:mm'}}</div>
         
+        <!-- If train is cancelled, add information -->
         <div *ngIf="tableRow.trainCancelled" [style.color]="'red'">Cancelled</div> </td>   
+  
     </ng-container>
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

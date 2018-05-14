@@ -13,13 +13,11 @@ export class ContainerComponent implements OnInit {
 
   constructor(private schedulerService: ScheduleService) { }
 
-  private allTrains: Train[] = [];
   private trains: Train[] = [];
 
   tableRowsDeparture: TableRow[] = [];
   tableRowsArrival: TableRow[] = [];
   stations: Station[] = [];
-  selectedStationShortCode = '';
 
   ngOnInit() {
     this.getPassengerStations();
@@ -30,14 +28,20 @@ export class ContainerComponent implements OnInit {
     this.stations = stationsAll.filter(station => station.passengerTraffic === true);
     }));
   }
+  // Search maps results from API to TableRow objects which are shown according whether they are for departing or arrviving trains
   search(stationShortCode: string) {
     this.clear();
 
     this.schedulerService.getTrains(stationShortCode).subscribe(trains => {
       trains.map( train => {
-        if ( train.trainCategory !== 'Long-distance') {
+        console.log(train);
+
+        if ( train.commuterLineID === 'I' || train.commuterLineID === 'P') {
           return;
         }
+        if ( train.trainCategory !== 'Long-distance' && train.trainCategory !== 'Commuter') {
+          return;
+         }
         const departure: TimeTableRow = train.timeTableRows.find( timeTable =>
           timeTable.stationShortCode === stationShortCode && timeTable.type === 'DEPARTURE' );
         const arrival: TimeTableRow = train.timeTableRows.find( timeTable =>
@@ -45,9 +49,12 @@ export class ContainerComponent implements OnInit {
 
         const stationTime = '';
 
+        // Departing trains
         if ( departure ) {
+
+          // Create new tableRow object
           const tableRow: TableRow = {
-            trainName:  train.trainType + train.trainNumber,
+            trainName: train.commuterLineID !== '' ? 'Commuter train ' + train.commuterLineID :  train.trainType + ' ' + train.trainNumber,
             departingStation: this.getStationName( train.timeTableRows[0].stationShortCode ),
             arrivalStation: this.getStationName( train.timeTableRows[train.timeTableRows.length - 1].stationShortCode),
             selectedStationTime: departure.scheduledTime,
@@ -57,9 +64,13 @@ export class ContainerComponent implements OnInit {
           };
           this.tableRowsDeparture.push(tableRow);
         }
+
+        // Arriving trains
         if ( arrival ) {
+
+          // Create new TableRow object
           const tableRow: TableRow = {
-            trainName:  train.trainType + train.trainNumber,
+            trainName:  train.commuterLineID !== '' ? 'Commuter train ' + train.commuterLineID :  train.trainType + ' ' + train.trainNumber,
             departingStation: this.getStationName(train.timeTableRows[0].stationShortCode),
             arrivalStation: this.getStationName( train.timeTableRows[train.timeTableRows.length - 1].stationShortCode ),
             selectedStationTime: arrival.scheduledTime,
@@ -70,14 +81,12 @@ export class ContainerComponent implements OnInit {
           this.tableRowsArrival.push(tableRow);
         }
       });
+
     });
 
-    this.selectedStationShortCode = stationShortCode;
-    console.log(this.tableRowsArrival);
-
   }
+  // Returns station name if found. If not returns stationShortCode
   getStationName( stationShortCode ) {
-
     const station: Station = this.stations.find( current => current.stationShortCode === stationShortCode );
 
     if ( station ) {

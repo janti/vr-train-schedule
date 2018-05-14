@@ -12,18 +12,17 @@ export class ScheduleService {
   apiRootTrains = 'https://rata.digitraffic.fi/api/v1/live-trains/station/';
   apiRootStations = 'https://rata.digitraffic.fi/api/v1/metadata/stations';
 
-  parameters = '?arrived_trains=0&arriving_trains=20&departed_trains=0&departing_trains=20';
+  parameters = '?arrived_trains=0&arriving_trains=25&departed_trains=0&departing_trains=25';
 
   constructor(private http: HttpClient) {
   }
-
+  // Returns all stations from API
   getAllStations() {
     return this.http.get<Station[]>(this.apiRootStations);
   }
-
+  /// Returns all trains from API with stationShortCode as parameter
   getTrains(stationShortCode) {
     const apiUrl = this.apiRootTrains +  stationShortCode + this.parameters;
-    console.log(apiUrl);
     return this.http.get<Train[]>(apiUrl);
   }
 }

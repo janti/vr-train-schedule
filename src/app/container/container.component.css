@@ -2,20 +2,5 @@
     position: absolute;
     left: 0;
     top: 50px;
-    margin-left: 20px;
-}
-
-.mat-tab-label-content:focus{
-    background-color: #0bae02;
-}
-.mat-card {
-    height: 500px;
-}
-.train-tab-group {
-    max-height: 500px;
-    min-height: 200px;
-}
-.mat-primary:focus {
-    background-color: white; 
 }
 

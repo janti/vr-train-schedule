@@ -6,10 +6,19 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
 }
 .header-text {
     color: white;
-    padding-left: 3em;
     padding-top: 10px;
+}
+@media (max-width: 360px) {
+    .header-text {
+        padding-left: 10px;
+        
+    }
+}
+@media (min-width: 361px) {
+    .header-text {
+        padding-left: 24px;
+    }
 }

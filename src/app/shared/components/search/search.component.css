@@ -1,9 +1,21 @@
 .mat-input-element {
     caret-color: #0bae02 !important;
 }
-.searchField  {
+.searchField {
     display: flex;
     padding-top: 10px;
+    padding-left: 10px;
+}
+
+@media (max-width: 360px ) {
+    .searchField  {
+        padding-left: 10px;
+    }
+}
+@media (min-width: 361px) {
+    .searchField  {
+        padding-left: 24px;
+    }
 }
 .resetButton {
     padding-top: 10px;

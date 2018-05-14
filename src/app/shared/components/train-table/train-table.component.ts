@@ -12,7 +12,6 @@ export class TrainTableComponent implements OnInit {
   displayedColumns = ['trainName', 'departingStation', 'arrivalStation', 'selectedStationTime'];
   @Input() dataSource: TableRow[];
   @Input() stations: Station[];
-  @Input() selectedStationShortCode: string;
   @Input() type: string;
 
   constructor() { }

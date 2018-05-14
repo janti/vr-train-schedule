@@ -15,7 +15,7 @@ export class SearchComponent implements OnInit {
 
   public filteredStations: Observable<Station[]>;
 
-  constructor(private schedulerService: ScheduleService) {}
+  constructor() {}
 
   ngOnInit() {
 
