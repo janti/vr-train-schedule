@@ -35,10 +35,11 @@ export class ContainerComponent implements OnInit {
     this.schedulerService.getTrains(stationShortCode).subscribe(trains => {
       trains.map( train => {
         console.log(train);
-
+        // Remove internal trains
         if ( train.commuterLineID === 'I' || train.commuterLineID === 'P') {
           return;
         }
+        // Remove cargo etc. trains
         if ( train.trainCategory !== 'Long-distance' && train.trainCategory !== 'Commuter') {
           return;
          }
