@@ -13,6 +13,14 @@ export class ContainerComponent implements OnInit {
 
   constructor(private schedulerService: ScheduleService) { }
 
+  private readonly departureType = 'DEPARTURE';
+  private readonly arrivalType = 'ARRIVAL';
+  private readonly commuterTrainP = 'P';
+  private readonly commuterTrainI = 'I';
+  private readonly trainCategoryLD = 'Long-distance';
+  private readonly trainCategoryCommuter = 'Commuter';
+  private readonly commuterNamePrefix = 'Commuter train ';
+
   private trains: Train[] = [];
 
   tableRowsDeparture: TableRow[] = [];
@@ -24,69 +32,77 @@ export class ContainerComponent implements OnInit {
   }
   getPassengerStations() {
     this.schedulerService.getAllStations().subscribe((stationsAll => {
-    // Filter only stations which has passenger traffic
     this.stations = stationsAll.filter(station => station.passengerTraffic === true);
     }));
   }
-  // Search maps results from API to TableRow objects which are shown according whether they are for departing or arrviving trains
+
   search(stationShortCode: string) {
     this.clear();
 
     this.schedulerService.getTrains(stationShortCode).subscribe(trains => {
       trains.map( train => {
         console.log(train);
+
         // Remove internal trains
-        if ( train.commuterLineID === 'I' || train.commuterLineID === 'P') {
+        if ( train.commuterLineID === this.commuterTrainI || train.commuterLineID === this.commuterTrainP) {
           return;
         }
         // Remove cargo etc. trains
-        if ( train.trainCategory !== 'Long-distance' && train.trainCategory !== 'Commuter') {
+        if ( train.trainCategory !== this.trainCategoryLD && train.trainCategory !== this.trainCategoryCommuter) {
           return;
          }
-        const departure: TimeTableRow = train.timeTableRows.find( timeTable =>
-          timeTable.stationShortCode === stationShortCode && timeTable.type === 'DEPARTURE' );
+
+         const departure: TimeTableRow = train.timeTableRows.find( timeTable =>
+          timeTable.stationShortCode === stationShortCode && timeTable.type === this.departureType );
         const arrival: TimeTableRow = train.timeTableRows.find( timeTable =>
-          timeTable.stationShortCode === stationShortCode && timeTable.type === 'ARRIVAL' );
+          timeTable.stationShortCode === stationShortCode && timeTable.type === this.arrivalType );
 
-        const stationTime = '';
-
-        // Departing trains
         if ( departure ) {
-
-          // Create new tableRow object
-          const tableRow: TableRow = {
-            trainName: train.commuterLineID !== '' ? 'Commuter train ' + train.commuterLineID :  train.trainType + ' ' + train.trainNumber,
-            departingStation: this.getStationName( train.timeTableRows[0].stationShortCode ),
-            arrivalStation: this.getStationName( train.timeTableRows[train.timeTableRows.length - 1].stationShortCode),
-            selectedStationTime: departure.scheduledTime,
-            type: 'DEPARTURE',
-            actualTime: departure.actualTime,
-            trainCancelled: departure.cancelled
-          };
-          this.tableRowsDeparture.push(tableRow);
+          this.createTableRowsForArrival(train, departure);
         }
 
-        // Arriving trains
         if ( arrival ) {
-
-          // Create new TableRow object
-          const tableRow: TableRow = {
-            trainName:  train.commuterLineID !== '' ? 'Commuter train ' + train.commuterLineID :  train.trainType + ' ' + train.trainNumber,
-            departingStation: this.getStationName(train.timeTableRows[0].stationShortCode),
-            arrivalStation: this.getStationName( train.timeTableRows[train.timeTableRows.length - 1].stationShortCode ),
-            selectedStationTime: arrival.scheduledTime,
-            actualTime: arrival.actualTime,
-            type: 'ARRIVAL',
-            trainCancelled: train.cancelled
-          };
-          this.tableRowsArrival.push(tableRow);
+          this.createTableRowsForDeparture(train, arrival);
         }
       });
-
     });
 
   }
-  // Returns station name if found. If not returns stationShortCode
+  private createTableRowsForDeparture(train: Train, departure: TimeTableRow) {
+
+    const tableRow: TableRow = <TableRow>{};
+
+    this.populateTableRowGeneral( train, tableRow );
+
+    tableRow.selectedStationTime = departure.scheduledTime;
+    tableRow.type = this.departureType;
+    tableRow.actualTime = departure.actualTime;
+    tableRow.trainCancelled = departure.cancelled;
+
+    this.tableRowsDeparture.push(tableRow);
+  }
+
+  private createTableRowsForArrival(train: Train, arrival: TimeTableRow) {
+
+    const tableRow: TableRow = <TableRow>{};
+
+    this.populateTableRowGeneral( train, tableRow );
+
+    tableRow.selectedStationTime =  arrival.scheduledTime;
+    tableRow.type = this.arrivalType;
+    tableRow.actualTime = arrival.actualTime;
+    tableRow.trainCancelled =  arrival.cancelled;
+
+    this.tableRowsArrival.push(tableRow);
+  }
+
+  private populateTableRowGeneral( train: Train, tableRow: TableRow ) {
+    tableRow.trainName =
+      train.commuterLineID !== '' ? this.commuterNamePrefix + train.commuterLineID : train.trainType + ' ' + train.trainNumber;
+    tableRow.departingStation = this.getStationName(train.timeTableRows[0].stationShortCode);
+    tableRow.arrivalStation = this.getStationName(train.timeTableRows[train.timeTableRows.length - 1].stationShortCode);
+  }
+
   getStationName( stationShortCode ) {
     const station: Station = this.stations.find( current => current.stationShortCode === stationShortCode );
 
