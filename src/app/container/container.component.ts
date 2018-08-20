@@ -58,11 +58,11 @@ export class ContainerComponent implements OnInit {
           timeTable.stationShortCode === stationShortCode && timeTable.type === this.arrivalType );
 
         if ( departure ) {
-          this.createTableRowsForArrival(train, departure);
+          this.createTableRowsForDeparture(train, departure);
         }
 
         if ( arrival ) {
-          this.createTableRowsForDeparture(train, arrival);
+          this.createTableRowsForArrival(train, arrival);
         }
       });
     });
