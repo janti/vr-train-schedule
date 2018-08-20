@@ -39,6 +39,8 @@ export class ContainerComponent implements OnInit {
   search(stationShortCode: string) {
     this.clear();
 
+    const timeNow = new Date();
+
     this.schedulerService.getTrains(stationShortCode).subscribe(trains => {
       trains.map( train => {
         console.log(train);
@@ -58,12 +60,23 @@ export class ContainerComponent implements OnInit {
           timeTable.stationShortCode === stationShortCode && timeTable.type === this.arrivalType );
 
         if ( departure ) {
-          this.createTableRowsForDeparture(train, departure);
+          const scheduledDepartureTime: Date = new Date( departure.scheduledTime );
+
+          if (  scheduledDepartureTime > timeNow ) {
+            this.createTableRowsForDeparture(train, departure);
+          }
         }
 
         if ( arrival ) {
+          const scheduledArrivalTime: Date = new Date( arrival.scheduledTime );
+
+        console.log(timeNow);
+        console.log(scheduledArrivalTime);
+
+          if ( scheduledArrivalTime > timeNow ) {
           this.createTableRowsForArrival(train, arrival);
         }
+      }
       });
     });
 
